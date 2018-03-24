@@ -1,0 +1,19 @@
+{
+  "name": "luggage_booking",
+  "version": "0.1.0",
+  "description": "Used to match traveller and requester in delivering the package to the destination",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sivajrm/LuggageBooking.git"
+  },
+  "author": "Siva Sivasubramoniam Jayaram",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sivajrm/LuggageBooking/issues"
+  },
+  "homepage": "https://github.com/sivajrm/LuggageBooking#readme"
+}
