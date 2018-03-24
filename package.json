@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/sivajrm/LuggageBooking/issues"
   },
-  "homepage": "https://github.com/sivajrm/LuggageBooking#readme"
+  "homepage": "https://github.com/sivajrm/LuggageBooking#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
