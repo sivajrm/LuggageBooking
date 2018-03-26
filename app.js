@@ -83,10 +83,12 @@ MongoClient.connect(url, function(err, db) {
   });
 });
 
+/*
 app.param('collectionName', function(req, res, next, collectionName){
   req.collection = dbo.collection(collectionName)
   return next()
 });
+
 /*
 app.get('/collections/:collectionName',function(req,res){
 	var db = req.db;
@@ -100,8 +102,9 @@ app.get('/collections/:collectionName',function(req,res){
 
 
 app.get('/collections/:collectionName',function(req,res,next){
-	console.log("get activities"+req+" "+req.collection);
-	dbo.collection("foods").find({}).toArray(function(err, result) {
+	console.log("get activities"+req+" "+req.params.collectionName);
+	var colln=req.params.collectionName;
+	dbo.collection(colln).find({}).toArray(function(err, result) {
 	//dbo.collection("foods").find({},function (err, foodRes) {
         if (err) return res.status(500).send("There was a problem finding the users.");
         console.log("Exec/..."+JSON.stringify(result));
