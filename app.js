@@ -1,8 +1,8 @@
 //main application
 var mongoose = require('mongoose');
  mongoose.Promise = require('bluebird');
-var Person = require('./person/person');
-var Food = require('./person/food');
+
+var FoodModel = require('./models/food');
 var express = require('express')
 var app = express()
 
@@ -21,7 +21,7 @@ var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 
 // Connection URL
-var url = 'mongodb://localhost:27017/mean';
+var url = 'mongodb://localhost:27017/Factory';
 // Connection URL
 var food = [{
 'name': 'Chicken',
@@ -31,57 +31,21 @@ var food = [{
 'tasty': false
 }];
 
-var testPerson = new Person({
-        _id: new mongoose.Types.ObjectId(),
-        name:'Siva',
-        age: 23,
-        phone: '408-504-7702',
-        email: 'test@gmail.com'
-    });
-    
+mongoose.Promise = global.Promise;
 
+mongoose.connect(url);
 
-var dbo,db2;       
-// Use connect method to connect to the server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-  //Factory database
-
-  dbo = db.db("Factory");
-  db=dbo;
-  //foods collection
-  //dbo.collection("person").insert(testPerson,function(error,result){
-//here result will contain an array of records inserted
-  //if(!error) {
-//		console.log("Success :"+result.ops.length+" person inserted!");
- // } else {
- 	//	console.log("Some error was encountered!");
- // }
-//});
-  /*dbo.collection('person').save(function(err) {
-  	    console.log("exec save block");
-        if (err) throw err;
-        console.log('Person successfully saved.');
-   });
-  /*dbo.collection("foods").insert(food,function(error,result){
-//here result will contain an array of records inserted
-  if(!error) {
-		console.log("Success :"+result.ops.length+" food inserted!");
-  } else {
-		console.log("Some error was encountered!");
-  }
-});*/
-  
-
-  dbo.collection("foods").find({}).toArray(function(err, result) {
-    if (err) 
-    	console.log(err);
-    else
-    	console.log(result);
-    //db.close();
-  });
+mongoose.connection.on('error', function() {
+    console.log('Could not connect to the database. Exiting now...');
+    process.exit();
 });
+
+mongoose.connection.once('open', function() {
+    console.log("Successfully connected to the database");
+})
+
+
+
 
 /*
 app.param('collectionName', function(req, res, next, collectionName){
@@ -98,20 +62,31 @@ app.get('/collections/:collectionName',function(req,res){
     });
 });
 */
-
-
-
+app.get('/collection/:collectionName',function(req,res,next){
+	console.log("outside and infinite");
+	FoodModel.find(function(err, notes){
+		console.log("inside and infinite");
+        if(err) {
+            console.log(err);
+            res.status(500).send({message: "Some error occurred while retrieving notes."});
+        } else {
+            res.send(notes);
+        }
+    });
+});
+/*
 app.get('/collections/:collectionName',function(req,res,next){
 	console.log("get activities"+req+" "+req.params.collectionName);
 	var colln=req.params.collectionName;
-	dbo.collection(colln).find({}).toArray(function(err, result) {
-	//dbo.collection("foods").find({},function (err, foodRes) {
+	//dbo.collection(colln).find({}).toArray(function(err, result) {
+	Food.find({}).toArray(function (err, foodRes) {
         if (err) return res.status(500).send("There was a problem finding the users.");
         console.log("Exec/..."+JSON.stringify(result));
         res.send(result);
     });
  });
-//app.use('/',router);
+ */
+
 app.listen(8000, function () {
   console.log('Example app listening on port 8000!')
 })
