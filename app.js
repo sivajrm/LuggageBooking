@@ -1,11 +1,9 @@
 //main application
 var mongoose = require('mongoose');
- mongoose.Promise = global.Promise;
-
+mongoose.Promise = global.Promise;
 var FoodModel = require('./models/food');
 var express = require('express')
 var app = express()
-
 var bodyParser = require('body-parser');
 
 // configure app to use bodyParser()
