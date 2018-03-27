@@ -1,13 +1,11 @@
-//routes to define the api routes
 var express = require('express'),
 router = express.Router(),
-home = require('../controllers/homeController');
-//image = require('../controllers/image');
-module.exports = function(app) {
-router.get('/', home.index);
-router.get('/foods/:food_id', home.index);
-router.post('/foods/:food_id', home.create);
-//router.post('/foods/:food_id/', home.create);
-//router.put('/foods/:food_id/name',home.name);
-app.use(router);
+home =require('../controllers/homeController');
+module.exports = function(app){
+	app.get('/',home.root);	
+	app.get('/foods',home.index);
+	app.get('/foods/:_foodId',home.getDocForID);
+	app.post('/foods',home.create);
 };
+	
+//module.exports=router;
