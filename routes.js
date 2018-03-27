@@ -1,12 +1,11 @@
 var express = require('express'),
-router = express.Router({mergeParams: true}),
-home = require('../controllers/homeController'),
-//image = require('../controllers/image');
-module.exports = function(app) {
-app.get('/foods/:id',home.index);
-app.post('/foods/',home.create);	
-
-//router.post('/images/:image_id/like', image.like);
-//router.post('/images/:image_id/comment', image.comment);
-//app.use(router);
+router = express.Router(),
+home =require('../controllers/homeController');
+module.exports = function(app){
+	app.get('/',home.root);	
+	app.get('/foods',home.index);
+	app.get('/foods:_foodId',home.getDocForID);
+	app.post('/foods',home.create);
 };
+	
+//module.exports=router;

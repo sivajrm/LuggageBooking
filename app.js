@@ -42,7 +42,7 @@ app.param('collectionName', function(req, res, next, collectionName){
   return next()
 });
 */
-
+/*
 app.get('/collections/:collectionName',function(req,res){
 	var db = req.db;
     var collection = db.get('foods');
@@ -50,7 +50,12 @@ app.get('/collections/:collectionName',function(req,res){
         res.send(docs);
     });
 });
-
+*/
+/*
+app.get('/',function(req,res){
+	res.send({message:"ok server ON"});
+});
+*/
 /*
 app.get('/collection/:collectionName',function(req,res,next){
 	console.log("outside and infinite");
