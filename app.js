@@ -1,6 +1,6 @@
 //main application
 var mongoose = require('mongoose');
- mongoose.Promise = require('bluebird');
+ mongoose.Promise = global.Promise;
 
 var FoodModel = require('./models/food');
 var express = require('express')
@@ -16,20 +16,9 @@ app.use(bodyParser.json());
 config = require('./config/configure'),
 app = config(app);
 
-
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
 // Connection URL
 var url = 'mongodb://localhost:27017/Factory';
 // Connection URL
-var food = [{
-'name': 'Chicken',
-'tasty': true
-},{
-'name': 'pavakai',
-'tasty': false
-}];
 
 mongoose.Promise = global.Promise;
 
@@ -52,8 +41,8 @@ app.param('collectionName', function(req, res, next, collectionName){
   req.collection = dbo.collection(collectionName)
   return next()
 });
+*/
 
-/*
 app.get('/collections/:collectionName',function(req,res){
 	var db = req.db;
     var collection = db.get('foods');
@@ -61,11 +50,12 @@ app.get('/collections/:collectionName',function(req,res){
         res.send(docs);
     });
 });
-*/
+
+/*
 app.get('/collection/:collectionName',function(req,res,next){
 	console.log("outside and infinite");
-	FoodModel.find(function(err, notes){
-		console.log("inside and infinite");
+	FoodModel.findById(req.params.collectionName,function(err, notes){
+		console.log("inside and infinite:"+req.params.collectionName);
         if(err) {
             console.log(err);
             res.status(500).send({message: "Some error occurred while retrieving notes."});
@@ -74,7 +64,18 @@ app.get('/collection/:collectionName',function(req,res,next){
         }
     });
 });
+*/
 /*
+app.post('/collection',function(req,res,next){
+	console.log("outside and infinite");
+	if(!req.body.content) {
+        return res.status(400).send({message: "message can not be empty"});
+    }
+	    console.log("inside post");
+		console.log("n: "+req.body.name+"\nt:"+req.body.tasty); 
+		res.send({message: "Success"});
+});
+
 app.get('/collections/:collectionName',function(req,res,next){
 	console.log("get activities"+req+" "+req.params.collectionName);
 	var colln=req.params.collectionName;
@@ -86,7 +87,7 @@ app.get('/collections/:collectionName',function(req,res,next){
     });
  });
  */
-
+require('./route/routes.js')(app)
 app.listen(8000, function () {
   console.log('Example app listening on port 8000!')
 })
