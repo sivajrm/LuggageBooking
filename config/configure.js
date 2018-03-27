@@ -14,13 +14,7 @@ module.exports = function(app) {
 	app.use(bodyParser.json());
 	app.use(methodOverride());
 	app.use(cookieParser('some-secret-value-here'));
-routes(app);//moving the routes to routes folder.
-//app engine to render dynamic html
-app.engine('handlebars', exphbs.create({
-defaultLayout: 'main',
-layoutsDir: app.get('views') + '/layouts',
-partialsDir: [app.get('views') + '/partials']
-}).engine);
-app.set('view engine', 'handlebars');
+routes(app);
+//moving the routes to routes folder.
 return app;
 }
