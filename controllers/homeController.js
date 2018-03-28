@@ -14,20 +14,30 @@ exports.notFound = function(req, res) {
 };
 
 exports.update = function(req,res){
-	FoodModel.findByIdAndRemove(req.params._foodId, function(err, note) {
+	FoodModel.findById(mongoose.Types.ObjectId(req.params._foodId), function(err, food) {
         if(err) {
             console.log(err);
             if(err.kind === 'ObjectId') {
-                return res.status(404).send({message: "Food not found with id " + req.params.noteId});                
+                return res.status(404).send({message: "Food not found with id " + req.params._foodId});                
             }
-            return res.status(500).send({message: "Could not delete food with id " + req.params.noteId});
+            return res.status(500).send({message: "Error finding food with id " + req.params._foodId});
         }
 
-        if(!note) {
-            return res.status(404).send({message: "Food not found with id " + req.params.noteId});
+        if(!food) {
+            return res.status(404).send({message: "Note not found with id " + req.params._foodId});            
         }
-        console.log("Food deleted successfully");
-        res.send({message: "Food deleted successfully!"})
+
+        food.name = req.body.name;
+        food.tasty = req.body.tasty;
+
+        food.save(function(err, data){
+            if(err) {
+                res.status(500).send({message: "Could not update food with id " + req.params._foodId});
+            } else {
+            	console.log("Updated successfully");
+                res.send("{message: "+data+"}");
+            }
+        });
     });
 }
 
