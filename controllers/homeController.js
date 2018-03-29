@@ -1,5 +1,6 @@
  
-var FoodModel = require('../models/food');
+//var FoodModel = require('../models/food');
+var UserModel = require('../models/user');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
@@ -14,25 +15,25 @@ exports.notFound = function(req, res) {
 };
 
 exports.update = function(req,res){
-	FoodModel.findById(mongoose.Types.ObjectId(req.params._foodId), function(err, food) {
+	UserModel.findById(mongoose.Types.ObjectId(req.params._userId), function(err, user) {
         if(err) {
             console.log(err);
             if(err.kind === 'ObjectId') {
-                return res.status(404).send({message: "Food not found with id " + req.params._foodId});                
+                return res.status(404).send({message: "User not found with id " + req.params._userId});                
             }
-            return res.status(500).send({message: "Error finding food with id " + req.params._foodId});
+            return res.status(500).send({message: "Error finding user with id " + req.params._userId});
         }
 
-        if(!food) {
-            return res.status(404).send({message: "Note not found with id " + req.params._foodId});            
+        if(!user) {
+            return res.status(404).send({message: "User not found with id " + req.params._userId});            
         }
 
-        food.name = req.body.name;
-        food.tasty = req.body.tasty;
+        user.email = req.body.email;
+        user.phone = req.body.phone;
 
-        food.save(function(err, data){
+        user.save(function(err, data){
             if(err) {
-                res.status(500).send({message: "Could not update food with id " + req.params._foodId});
+                res.status(500).send({message: "Could not update user with id " + req.params._userId});
             } else {
             	console.log("Updated successfully");
                 res.send("{message: "+data+"}");
@@ -47,68 +48,66 @@ exports.create = function(req, res) {
     	return res.status(400).send({message:"body can not be empty"});
     }
 	console.log("inside post:",req.url);
-	console.log("n: "+req.body.name+"\nt:"+req.body.tasty); 
-	var p = new FoodModel(); 
-	console.log("n: "+req.body.name+"\nt:"+req.body.tasty); 
-    p.name = req.body.name;  
-    p.tasty = req.body.tasty;  
+	console.log("name: "+req.body.name+"\nemail:"+req.body.email+"\nphone:"+req.body.phone); 
+	var p = new UserModel(); 
+	p.name = req.body.name;  
+    p.email = req.body.email; 
+    p.phone = req.body.phone;
+    p.username = req.body.username;
+    p.password = req.body.password; 
     p.save(function (err) {  
     	if (err) {  
             return res.send(err);  
         }  
         else{
-        	console.log('Added food...');
-        	return res.send({ message: 'food Created !' })
+        	console.log('Added user...');
+        	return res.send({ message: 'User Created !' })
         }
     });  
 };
 
 exports.getAll = function(req,res){
 	console.log("execute all:");
-	FoodModel.find({},function(err, foods){
+	UserModel.find({},function(err, users){
 		console.log("inside all");
     	if(err) {
     		console.log("Other err");
-        	return res.status(500).send({message: "Some error occurred while retrieving notes."});
+        	return res.status(500).send({message: "Some error occurred while retrieving users."});
     	} else {
        		console.log("retrieving all");
-        	return res.json(foods);
+        	return res.json(users);
     	}
   	});
 };
 
 exports.getDocForID = function(req,res){
-	console.log("execute getByID:"+req.params._foodId);
-	FoodModel.findById(req.params._foodId,function(err, foods){
-		console.log("inside homeController:"+req.params._foodId);
+	console.log("execute getByID:"+req.params._userId);
+	UserModel.findById(req.params._userId,function(err, user){
+		console.log("inside homeController:"+req.params._userId);
    		if(err) {
     	    console.log("Other err:"+err);
-        	return res.status(500).send({message: "Some error occurred while retrieving notes."});
+        	return res.status(500).send({message: "Some error occurred while retrieving users."});
     	} else {
         	console.log("retrieving getByID");
-        	if(!foods) {
-           		return res.status(404).send({message: "Food not found with id " + req.params._foodId});
+        	if(!user) {
+           		return res.status(404).send({message: "User not found with id " + req.params._userId});
         	}
-        	return res.json(foods);
+        	return res.json(user);
     	}
     });
 };
 
 exports.delete = function(req,res){
-	FoodModel.findByIdAndRemove(mongoose.Types.ObjectId(req.params._foodId), function(err, food) {
+	UserModel.findByIdAndRemove(mongoose.Types.ObjectId(req.params._userId), function(err, user) {
         if(err) {
             console.log(err);
             if(err.kind === 'ObjectId') {
-                return res.status(404).send({message: "Food not found with id " + req.params._foodId});                
+                return res.status(404).send({message: "User not found with id " + req.params._userId});                
             }
-            return res.status(500).send({message: "Could not delete food with id" + req.params._foodId});
+            return res.status(500).send({message: "Could not delete user with id" + req.params._userId});
         }
-
-        if(!food) {
-        	return res.status(404).send({message: "Food not found with id " + req.params._foodId});
-        }
-        console.log("Food deleted successfully");
-        return res.send({message: "Food deleted successfully!"})
+        console.log("User deleted successfully");
+        return res.send({message: "User deleted successfully!"})
     });
 }
 

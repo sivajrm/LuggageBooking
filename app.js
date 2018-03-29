@@ -1,16 +1,17 @@
 //main application
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-var FoodModel = require('./models/food');
+//var FoodModel = require('./models/food');
+var UserModel = require('./models/user');
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser');
-
+var morgan      = require('morgan');
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(morgan('dev'));
 config = require('./config/configure'),
 app = config(app);
 
