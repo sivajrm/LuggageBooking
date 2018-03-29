@@ -1,7 +1,6 @@
 //main application
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-//var FoodModel = require('./models/food');
 var UserModel = require('./models/user');
 var express = require('express')
 var app = express()

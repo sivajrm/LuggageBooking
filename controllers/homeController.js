@@ -1,9 +1,12 @@
  
-//var FoodModel = require('../models/food');
 var UserModel = require('../models/user');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
+var config = require('../config/configure');
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcryptjs');
+
 exports.root = function(req, res) {
 	console.log("root executing:");
 	res.send({status:"Server on and running.."});
@@ -44,24 +47,27 @@ exports.update = function(req,res){
 
 exports.create = function(req, res) {
 	console.log("outside and infinite:",req.body);
+	var hashedPassword = bcrypt.hashSync(req.body.password, 8)
 	if(!req.body) {
     	return res.status(400).send({message:"body can not be empty"});
     }
-	console.log("inside post:",req.url);
-	console.log("name: "+req.body.name+"\nemail:"+req.body.email+"\nphone:"+req.body.phone); 
-	var p = new UserModel(); 
-	p.name = req.body.name;  
-    p.email = req.body.email; 
-    p.phone = req.body.phone;
-    p.username = req.body.username;
-    p.password = req.body.password; 
-    p.save(function (err) {  
+	var p 		= new UserModel(); 
+	p.name 		= req.body.name;  
+    p.email 	= req.body.email; 
+    p.phone 	= req.body.phone;
+    p.username  = req.body.username;
+    p.password  = hashedPassword; 
+    p.save(function (err,user) {  
     	if (err) {  
             return res.send(err);  
         }  
         else{
-        	console.log('Added user...');
-        	return res.send({ message: 'User Created !' })
+        		// create a token
+    			var token = jwt.sign({ id: user._id }, config.get().crypt.secret, {
+    			expiresIn: 86400 // expires in 24 hours
+    	    });
+    		res.status(200).send({ auth: true, token: token, message: 'User Created !' });
+        	console.log('Added user with auth:'+token);
         }
     });  
 };
