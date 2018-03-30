@@ -11,14 +11,11 @@ var morgan      = require('morgan');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
-config = require('./config/configure'),
+config = require('./config/configure');
 app = config(app);
 
-// Connection URL
-var url = 'mongodb://localhost:27017/Factory';
-
 mongoose.Promise = global.Promise;
-
+var url='mongodb://localhost:27017/Factory';
 mongoose.connect(url);
 
 mongoose.connection.on('error', function() {

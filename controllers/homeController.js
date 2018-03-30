@@ -115,7 +115,7 @@ exports.delete = function(req,res){
 }
 
 exports.getUserFromToken = function(req,res){
-	var token = req.headers['x-access-token'];
+	var token = req.headers['x-access-token'] || req.body.token || req.query.token;
   	if (!token) 
   		return res.status(401).send({ auth: false, message: 'No token provided.' });
  	jwt.verify(token, config.get().crypt.secret, function(err, decoded) {

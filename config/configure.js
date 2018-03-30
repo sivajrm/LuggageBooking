@@ -26,7 +26,7 @@ var config = {
       key: 'the.express.session.id',
       secret: 'supersecret'
     },
-    database: 'mongodb://localhost:27017/Factory',
+    database: 'mongodb://localhost:27017/Factory'
   }
 }
 
