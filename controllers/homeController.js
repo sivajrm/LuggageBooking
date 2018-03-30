@@ -45,8 +45,7 @@ exports.update = function(req,res){
     });
 }
 
-exports.create = function(req, res) {
-	console.log("outside and infinite:",req.body);
+exports.signup = function(req, res) {
 	var hashedPassword = bcrypt.hashSync(req.body.password, 8)
 	if(!req.body) {
     	return res.status(400).send({message:"body can not be empty"});
@@ -91,10 +90,8 @@ exports.getDocForID = function(req,res){
 	UserModel.findById(req.params._userId,function(err, user){
 		console.log("inside homeController:"+req.params._userId);
    		if(err) {
-    	    console.log("Other err:"+err);
-        	return res.status(500).send({message: "Some error occurred while retrieving users."});
+    	   return res.status(500).send({message: "Some error occurred while retrieving users."});
     	} else {
-        	console.log("retrieving getByID");
         	if(!user) {
            		return res.status(404).send({message: "User not found with id " + req.params._userId});
         	}
@@ -117,5 +114,39 @@ exports.delete = function(req,res){
     });
 }
 
+exports.getUserFromToken = function(req,res){
+	var token = req.headers['x-access-token'];
+  	if (!token) 
+  		return res.status(401).send({ auth: false, message: 'No token provided.' });
+ 	jwt.verify(token, config.get().crypt.secret, function(err, decoded) {
+    if (err) 
+    	return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    console.log("token authenticated and retrieved id");
+    /*Uses the decoded user id from the supplied authtoken to retrieve user object*/
+    UserModel.findById(decoded.id,{ password: 0 },function (err, user) {
+  		if (err) 
+  			return res.status(500).send("There was a problem finding the user.");
+  		if (!user) 
+  			return res.status(404).send("No user found.");
+  		res.status(200).send(user);
+  	});
+  });
+}
 
+exports.validateLogin = function(req,res){
+	UserModel.findOne({ email: req.body.email }, function (err, user) {
+    	if (err) 
+    		return res.status(500).send('Error on the server.');
+    	if (!user) 
+    		return res.status(404).send('No user found.');
+    	console.log("password:"+user.password);
+    	var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    	if (!passwordIsValid) 
+    		return res.status(401).send({ auth: false, token: null });
+    	var token = jwt.sign({ id: user._id }, config.get().crypt.secret, {
+      	expiresIn: 86400 // expires in 24 hours
+    	});
+    	res.status(200).send({ auth: true, token: token });
+  });
+}
 
