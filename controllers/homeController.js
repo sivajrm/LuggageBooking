@@ -7,6 +7,7 @@ var config = require('../config/configure');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 
+
 exports.root = function(req, res) {
 	console.log("root executing:");
 	res.send({status:"Server on and running.."});
@@ -17,7 +18,7 @@ exports.notFound = function(req, res) {
 	res.send({status:"Server could not find the page.."});
 };
 
-exports.update = function(req,res){
+exports.update = function(req,res,next){
 	UserModel.findById(mongoose.Types.ObjectId(req.params._userId), function(err, user) {
         if(err) {
             console.log(err);
@@ -71,7 +72,7 @@ exports.signup = function(req, res) {
     });  
 };
 
-exports.getAll = function(req,res){
+exports.getAll = function(req,res,next){
 	console.log("execute all:");
 	UserModel.find({},function(err, users){
 		console.log("inside all");
@@ -85,7 +86,7 @@ exports.getAll = function(req,res){
   	});
 };
 
-exports.getDocForID = function(req,res){
+exports.getDocForID = function(req,res,next){
 	console.log("execute getByID:"+req.params._userId);
 	UserModel.findById(req.params._userId,function(err, user){
 		console.log("inside homeController:"+req.params._userId);
@@ -100,7 +101,7 @@ exports.getDocForID = function(req,res){
     });
 };
 
-exports.delete = function(req,res){
+exports.delete = function(req,res,next){
 	UserModel.findByIdAndRemove(mongoose.Types.ObjectId(req.params._userId), function(err, user) {
         if(err) {
             console.log(err);
@@ -114,26 +115,18 @@ exports.delete = function(req,res){
     });
 }
 
-exports.getUserFromToken = function(req,res){
-	var token = req.headers['x-access-token'] || req.body.token || req.query.token;
-  	if (!token) 
-  		return res.status(401).send({ auth: false, message: 'No token provided.' });
- 	jwt.verify(token, config.get().crypt.secret, function(err, decoded) {
-    if (err) 
-    	return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-    console.log("token authenticated and retrieved id");
-    /*Uses the decoded user id from the supplied authtoken to retrieve user object*/
-    UserModel.findById(decoded.id,{ password: 0 },function (err, user) {
+exports.getUserFromToken = function(req,res,next){
+	/*Uses the decoded user id from the supplied authtoken to retrieve user object*/
+    UserModel.findById(req.userId,{ password: 0 },function (err, user) {
   		if (err) 
   			return res.status(500).send("There was a problem finding the user.");
   		if (!user) 
   			return res.status(404).send("No user found.");
   		res.status(200).send(user);
   	});
-  });
 }
 
-exports.validateLogin = function(req,res){
+exports.validateLogin = function(req,res,next){
 	UserModel.findOne({ email: req.body.email }, function (err, user) {
     	if (err) 
     		return res.status(500).send('Error on the server.');
